@@ -139,10 +139,9 @@ if submit:
     else:
         st.session_state.history.append(guess_int)
 
-        if st.session_state.attempts % 2 == 0: 
-            secret = str(st.session_state.secret) # FIXME: Logic breaks here  (secret becomes a string → wrong comparison)
-        else:
-            secret = st.session_state.secret
+        # FIX: always use the int secret; removed the even-attempt str() conversion
+        # that forced a text comparison (e.g. "9" > "10") and produced wrong hints.
+        secret = st.session_state.secret
 
         outcome, message = check_guess(guess_int, secret)
 

@@ -12,7 +12,7 @@ def parse_guess(raw: str):
     raise NotImplementedError("Refactor this function from app.py into logic_utils.py")
 
 
-def check_guess(guess, secret):
+def check_guess(guess, secret): #FIX: Refactored logic into logic_utils.py using agent mode
     """
     Compare guess to secret and return (outcome, message).
 
