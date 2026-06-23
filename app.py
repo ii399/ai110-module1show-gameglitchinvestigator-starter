@@ -77,7 +77,8 @@ if "secret" not in st.session_state:
     st.session_state.secret = random.randint(low, high)
 
 if "attempts" not in st.session_state:
-    st.session_state.attempts = 1
+    # FIX: start at 0 so a fresh game gives the full attempt allowance for the difficulty
+    st.session_state.attempts = 0
 
 if "score" not in st.session_state:
     st.session_state.score = 0
@@ -88,10 +89,21 @@ if "status" not in st.session_state:
 if "history" not in st.session_state:
     st.session_state.history = []
 
+# FIX: regenerate the secret (and reset the round) whenever the difficulty changes,
+# so the answer is always within the selected difficulty's range instead of a stale
+# value left over from the previous setting.
+if st.session_state.get("difficulty") != difficulty:
+    st.session_state.difficulty = difficulty
+    st.session_state.secret = random.randint(low, high)
+    st.session_state.attempts = 0
+    st.session_state.status = "playing"
+    st.session_state.history = []
+
 st.subheader("Make a guess")
 
+# FIX: show the selected difficulty's actual range instead of the hardcoded 1-100
 st.info(
-    f"Guess a number between 1 and 100. "
+    f"Guess a number between {low} and {high}. "
     f"Attempts left: {attempt_limit - st.session_state.attempts}"
 )
 
@@ -117,7 +129,8 @@ with col3:
 
 if new_game:
     st.session_state.attempts = 0
-    st.session_state.secret = random.randint(1, 100)
+    # FIX: pick the new secret from the current difficulty's range, not a fixed 1-100
+    st.session_state.secret = random.randint(low, high)
     st.success("New game started.")
     st.rerun()
 
